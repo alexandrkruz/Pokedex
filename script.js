@@ -13,13 +13,7 @@ function fetchPokemonData() {
         fetch(pokemon.url)
           .then(response => response.json())
           .then(pokemonData => {
-            const cardHTML = `
-              <div class="card">
-                <img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" />
-                <h3>${pokemonData.name}</h3>
-                <p>Types: ${pokemonData.types.map(type => type.type.name).join(', ')}</p>
-              </div>`;
-              
+            const cardHTML = createPokemonCard(pokemonData);
             cardsHTML += cardHTML;
             pokedexElement.innerHTML = cardsHTML;
           })
@@ -31,6 +25,17 @@ function fetchPokemonData() {
     .catch(error => {
       console.log('Error fetching data:', error);
     });
+}
+
+function createPokemonCard(pokemonData) {
+  const cardHTML = `
+    <div class="card">
+      <img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" />
+      <h3>${pokemonData.name}</h3>
+      <p>Types: ${pokemonData.types.map(type => type.type.name).join(', ')}</p>
+    </div>`;
+    
+  return cardHTML;
 }
 
 fetchPokemonData();
