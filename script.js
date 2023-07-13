@@ -39,3 +39,20 @@ function createPokemonCard(pokemonData) {
 }
 
 fetchPokemonData();
+
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', handleSearch);
+
+function handleSearch(event) {
+  const searchValue = event.target.value.toLowerCase();
+  const cards = document.getElementsByClassName('card');
+
+  Array.from(cards).forEach(card => {
+    const pokemonName = card.getElementsByTagName('h3')[0].innerText.toLowerCase();
+    if (pokemonName.includes(searchValue)) {
+      card.style.display = 'inline-block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
