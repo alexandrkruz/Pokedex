@@ -1,3 +1,5 @@
+let allpokemonsData = [];
+
 function fetchPokemonData() {
   const url = 'https://pokeapi.co/api/v2/pokemon/?limit=12';
 
@@ -6,36 +8,43 @@ function fetchPokemonData() {
     .then(data => {
       const results = data.results;
 
-      const pokedexElement = document.getElementById('pokedex');
-      let cardsHTML = '';
-
       results.forEach(pokemon => {
         fetch(pokemon.url)
           .then(response => response.json())
           .then(pokemonData => {
-            const cardHTML = createPokemonCard(pokemonData);
-            cardsHTML += cardHTML;
-            pokedexElement.innerHTML = cardsHTML;
+
+            allpokemonsData.push(pokemonData)
+            createPokemonCards(allpokemonsData);
           })
-          .catch(error => {
-            console.log('Error fetching Pokemon data:', error);
-          });
       });
+      
     })
     .catch(error => {
       console.log('Error fetching data:', error);
     });
+    
 }
 
-function createPokemonCard(pokemonData) {
-  const cardHTML = `
+
+let count = 0;
+
+function createPokemonCards(pokemonsData) {
+
+  let cardsPokemons = "";
+  const pokedexElement = document.getElementById('pokedex');
+  count++
+  pokemonsData.forEach(pokemon => {
+
+    cardsPokemons += `
     <div class="card">
-      <img src="${pokemonData.sprites.front_default}" alt="${pokemonData.name}" />
-      <h3>${pokemonData.name}</h3>
-      <p>Types: ${pokemonData.types.map(type => type.type.name).join(', ')}</p>
+      <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}" />
+      <h3>${pokemon.name}</h3>
+      <p>Types: ${pokemon.types.map(type => type.type.name).join(', ')}</p>
     </div>`;
-    
-  return cardHTML;
+  })
+  console.log('Render', count)
+  pokedexElement.innerHTML = cardsPokemons;  
+
 }
 
 fetchPokemonData();
