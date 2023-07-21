@@ -1,28 +1,23 @@
 let allpokemonsData = [];
 
-function fetchPokemonData() {
+async function fetchPokemonData() {
   const url = 'https://pokeapi.co/api/v2/pokemon/?limit=12';
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const results = data.results;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    const results = data.results;
 
-      results.forEach(pokemon => {
-        fetch(pokemon.url)
-          .then(response => response.json())
-          .then(pokemonData => {
+    for (const pokemon of results) {
+      const response = await fetch(pokemon.url);
+      const pokemonData = await response.json();
+      allpokemonsData.push(pokemonData);
+    }
 
-            allpokemonsData.push(pokemonData)
-            createPokemonCards(allpokemonsData);
-          })
-      });
-      
-    })
-    .catch(error => {
-      console.log('Error fetching data:', error);
-    });
-    
+    createPokemonCards(allpokemonsData);
+  } catch (error) {
+    console.log('Ошибка при получении данных:', error);
+  }
 }
 
 
@@ -65,3 +60,4 @@ function handleSearch(event) {
     }
   });
 }
+
