@@ -1,23 +1,20 @@
 let allpokemonsData = [];
 
-async function fetchPokemonData() {
+function fetchPokemonData() {
   const url = 'https://pokeapi.co/api/v2/pokemon/?limit=12';
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-    const results = data.results;
+  return fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const results = data.results;
+      const promises = results.map(pokemon => fetch(pokemon.url).then(response => response.json()));
 
-    for (const pokemon of results) {
-      const response = await fetch(pokemon.url);
-      const pokemonData = await response.json();
-      allpokemonsData.push(pokemonData);
-    }
-
-    createPokemonCards(allpokemonsData);
-  } catch (error) {
-    console.log('Ошибка при получении данных:', error);
-  }
+      return Promise.all(promises);
+    })
+    .catch(error => {
+      console.log('Ошибка при получении данных:', error);
+      return []; // Возвращаем пустой массив в случае ошибки
+    });
 }
 
 
@@ -42,7 +39,10 @@ function createPokemonCards(pokemonsData) {
 
 }
 
-fetchPokemonData();
+fetchPokemonData()
+.then(allpokemonsData => {
+  createPokemonCards(allpokemonsData);
+});
 
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', handleSearch);
