@@ -1,4 +1,5 @@
 let allpokemonsData = [];
+let offset = 0;
 
 function fetchPokemonData() {
   const url = 'https://pokeapi.co/api/v2/pokemon/?limit=12';
@@ -38,6 +39,18 @@ function createPokemonCards(pokemonsData) {
   pokedexElement.innerHTML = cardsPokemons;  
 
 }
+
+function loadMorePokemon() {
+  offset += 12;
+  fetchPokemonData()
+    .then(newPokemonsData => {
+      allpokemonsData = allpokemonsData.concat(newPokemonsData);
+      createPokemonCards(allpokemonsData);
+    });
+}
+
+const loadMoreButton = document.getElementById('loadMore');
+loadMoreButton.addEventListener('click', loadMorePokemon);
 
 fetchPokemonData()
 .then(allpokemonsData => {
